@@ -16,8 +16,7 @@ function UserItem(props) {
 
                <div className="user-item__info">
                    <h2>{props.name} </h2>
-                   <h3> {props.placecount} {props.placecount ===1 ? 'Place' : 'Places'} </h3>
-               </div>
+                   {props.placeCount} {props.placeCount === 1 ? 'Place' : 'Places'}               </div>
                </Link>
 
                </Card>

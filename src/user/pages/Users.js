@@ -1,25 +1,49 @@
-import React from 'react';
+import React, {useEffect ,useState} from 'react';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import UsersList from '../components/UsersList';
-
+import {useHttpClient} from '../../shared/hooks/http-hook';
 
 function Users() {
-    const USERS = [
-        {id: 'u1' ,
-        name:'Robin Rezowan' ,
-        image :"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgHLhrRf3JMfujmP2qeTul_rm7X-BHW4odCg&usqp=CAU",
-        places: 3 },
-        {id: 'u2' ,
-        name:'Hasan Fahad' ,
-        image :"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgHLhrRf3JMfujmP2qeTul_rm7X-BHW4odCg&usqp=CAU",
-        places: 1 },
-        {id: 'u3' ,
-        name:'Itemam Haris' ,
-        image :"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgHLhrRf3JMfujmP2qeTul_rm7X-BHW4odCg&usqp=CAU",
-        places: 2 },
-        
-    ];
+     const {isLoading, error,sendRequest, clearError} = useHttpClient();
+
+      const [loadedUsers, setLoadedUsers] =useState();
+      
+
+  useEffect(() =>{
+      
+    const fetchUsers = async() =>{
+        try{
+            const responseData = await  sendRequest('http://localhost:5000/api/users'); //use asyn inside a function not in useEffect
+      
+           
+
+            setLoadedUsers(responseData.users);
+        }catch(err){
+           
+        }
+  
+
+
+      
+    };
+    fetchUsers();
+
+  },[sendRequest]);
+  //fetch inside the useEffect because.useEffect runs when any change on the page occurs.Without it if we change anything in the page.Then the users will not apear again.For solving this we have to use the useEffect.
+
+
     return (
-       <UsersList items={USERS}/>
+        <React.Fragment>
+            <ErrorModal error ={error} onClear = {clearError} />
+          {isLoading && (
+              <div class="center">
+                  <LoadingSpinner/>
+              </div>
+          )}
+         {!isLoading && loadedUsers && <UsersList items={loadedUsers}/>}
+        </React.Fragment>
+      
     )
 }
 
